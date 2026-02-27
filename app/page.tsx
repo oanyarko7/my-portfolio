@@ -1,3 +1,24 @@
+const PROJECTS = [
+  {
+    title: "Quantum Sort Visualizer",
+    description: "Visualizing O(n log n) algorithms with a space-themed UI.",
+    tags: ["React", "Algorithms", "Framer Motion"],
+    link: "#"
+  },
+  {
+    title: "Exoplanet API",
+    description: "A RESTful API that serves data about habitable planets.",
+    tags: ["Node.js", "Express", "NASA Data"],
+    link: "#"
+  },
+  {
+    title: "Black Hole Shader",
+    description: "A GLSL fragment shader simulating gravitational lensing.",
+    tags: ["WebGL", "GLSL", "Physics"],
+    link: "#"
+  }
+];
+
 import ProjectCard from './components/ProjectCard';
 
 export default function Home() {
@@ -33,23 +54,45 @@ export default function Home() {
         
         {/* 'grid-cols-1 md:grid-cols-2' is the magic: 1 col on phone, 2 on laptop */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ProjectCard 
-            title="Solar System Sim" 
-            description="Real-time orbital mechanics using JavaScript and canvas."
-            tags={["Math", "Physics", "JS"]}
-          />
-          <ProjectCard 
-            title="Sort Visualizer" 
-            description="Visualizing O(n log n) algorithms in the browser."
-            tags={["Algorithms", "CS Fundamentals"]}
-          />
-          <ProjectCard 
-            title="Atmosphere Data" 
-            description="Fetching and parsing real-time planetary weather APIs."
-            tags={["APIs", "Data Science"]}
-          />
-        </div>
+  {PROJECTS.map((project, index) => (
+    <ProjectCard 
+      key={index} 
+      title={project.title} 
+      description={project.description} 
+      tags={project.tags} 
+    />
+  ))}
+</div>
       </section>
+
+      <section id="about" className="max-w-4xl mx-auto px-8 py-32 border-t border-white/5">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <div>
+      <h2 className="text-3xl font-bold mb-6">Tracing the Digital Stars</h2>
+      <p className="text-slate-400 mb-4">
+        I’m currently pursuing a degree in Computer Science, driven by a 
+        fascination with how the laws of physics parallel the logic of code.
+      </p>
+      <p className="text-slate-400">
+        When I'm not debugging, I'm usually reading about astrophysics or 
+        experimenting with generative art inspired by cosmic patterns.
+      </p>
+    </div>
+    
+    {/* A placeholder for your image or a "Stats" box */}
+    <div className="bg-linear-to-br from-blue-500/10 to-purple-500/10 p-8 rounded-3xl border border-blue-500/20">
+      <h3 className="text-blue-400 font-mono mb-4 text-sm uppercase">Technical Stack</h3>
+      <ul className="grid grid-cols-2 gap-2 text-sm text-slate-300">
+        <li>• TypeScript</li>
+        <li>• Python</li>
+        <li>• Next.js</li>
+        <li>• Tailwind CSS</li>
+        <li>• Git / GitHub</li>
+        <li>• Linux</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
     </main>
   );
