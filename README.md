@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nyarko Osumanu Adamu — Portfolio
+
+A high-performance, accessible developer portfolio showcasing startup engineering, client systems, embedded projects, and backend architectures.
+
+**Live site:** [my-portfolio-gamma-nine-59.vercel.app](https://my-portfolio-gamma-nine-59.vercel.app)
+
+---
+
+## Highlights & Engineering Architecture
+
+- **Next.js 16 (App Router) & React 19**: Clean server-first architecture with strict separation of client interactivity.
+- **Hand-crafted 3D Canvas Matrix Engine**: A custom perspective 3D canvas pipeline ([`app/components/matrix3d.ts`](app/components/matrix3d.ts)) with adaptive frame budgeting, zero heavy 3D library dependencies (saving >600KB bundle overhead), and mobile frame throttling.
+- **Hardened HTTP Security**: Configured with strict security headers including `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security` (HSTS), and `Permissions-Policy`.
+- **WAI-ARIA & Accessibility Compliant**:
+  - Full keyboard accessibility and focus trapping in the command palette.
+  - Complete `@media (prefers-reduced-motion: reduce)` support halting animations and canvas loops into static composed frames.
+  - WCAG AA+ color contrast ratios across all semantic tokens.
+  - Skip to content link and deep-linkable project accordions.
+- **Power User Command Palette (`⌘K` / `Ctrl+K`)**: Rapid navigation across work, experience, about, and actions.
+- **Automated OpenGraph Generation**: Dynamic link preview cards generated via `@vercel/og` ([`app/opengraph-image.tsx`](app/opengraph-image.tsx)).
+
+---
+
+## Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router, Turbopack)
+- **Language:** TypeScript 5
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Graphics:** Hand-written HTML5 Canvas 2D / 3D perspective engine
+- **Typography:** Geist, Geist Mono, Instrument Serif (`next/font/google`)
+- **Deployment:** Vercel
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.17+ or later
+- npm, pnpm, or yarn
+
+### Installation
+
+```bash
+git clone https://github.com/oanyarko7/my-portfolio.git
+cd my-portfolio
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Quality Checks & Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run typecheck  # TypeScript check
+npm run lint       # ESLint check
+npm run build      # Production build
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+© 2026 [Nyarko Osumanu Adamu](https://github.com/oanyarko7). All rights reserved.

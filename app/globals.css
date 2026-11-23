@@ -1,26 +1,335 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette — raw values, referenced only through the semantic tokens below. */
+  --palette-cyan: #00e5ff; /* primary interactive / digital accent */
+  --palette-amber: #ffb000; /* occasional highlight */
+  --palette-violet: #b000ff; /* rare atmospheric / secondary detail */
+  --palette-crimson: #dc143c; /* status & exceptional emphasis only */
+  --palette-black: #090b09;
+  --palette-cream: #f0eee6;
+  --palette-stone: #a6a69b;
+
+  /* Semantic tokens */
+  --bg: var(--palette-black);
+  --surface: #111411;
+  --surface-2: #181c18;
+  --line: rgba(240, 238, 230, 0.09);
+  --line-strong: rgba(240, 238, 230, 0.18);
+  --fg: var(--palette-cream); /* text: primary   — 17.0:1 on --bg */
+  --muted: var(--palette-stone); /* text: secondary — 8.0:1 */
+  --faint: #807e75; /* text: labels   — 4.8:1 (AA) */
+  --accent: var(--palette-cyan);
+  --accent-ink: #00171b; /* text on accent fills */
+  --highlight: var(--palette-amber);
+  --atmos: #c75cff; /* violet text, lifted from #B000FF (4.0:1) to 6.0:1 */
+  --alert: #ff4d6a; /* crimson text, lifted from #DC143C (4.0:1) to 6.1:1 */
+  --alert-solid: var(--palette-crimson);
+  --focus: var(--palette-cyan);
+
+  /* Classic terminal chrome, used only inside the hero terminal. */
+  --term-red: #ff5f57;
+  --term-yellow: #febc2e;
+  --term-green: #28c840;
+  --term-prompt: #5af78e;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-highlight: var(--highlight);
+  --color-atmos: var(--atmos);
+  --color-alert: var(--alert);
+  --color-alert-solid: var(--alert-solid);
+  --color-term-red: var(--term-red);
+  --color-term-yellow: var(--term-yellow);
+  --color-term-green: var(--term-green);
+  --color-term-prompt: var(--term-prompt);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-instrument-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* The static background lives on <html> and doubles as the fallback when JS, canvas or motion is
+   unavailable: a faint green glow at the top and a dark vignette, so the page still looks composed.
+   <body> stays transparent so nothing it paints can cover the background canvas. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  color-scheme: dark;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(40, 200, 110, 0.14), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Fine film grain over everything — subtle texture, no image request. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 30%, transparent 75%);
+}
+
+/* Sections sit on a translucent veil so the background reads as atmosphere, not competition. */
+.veil {
+  background: rgba(9, 11, 9, var(--veil, 0.5));
+}
+
+/* A soft, edgeless dark pool behind a text column (no visible panel edges). */
+.text-scrim {
+  position: relative;
+}
+
+.text-scrim::before {
+  content: "";
+  position: absolute;
+  inset: -2rem -1rem;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 55% at 50% 45%, rgba(9, 11, 9, 0.9) 45%, rgba(9, 11, 9, 0) 100%);
+}
+
+@media (min-width: 768px) {
+  .text-scrim::before { inset: -4rem -5rem; }
+}
+
+/* Darkens the moving background behind text so contrast never depends on what the canvas draws. */
+.scrim {
+  background:
+    radial-gradient(ellipse 34% 30% at 24% 72%, rgba(9, 11, 9, 0.88), rgba(9, 11, 9, 0.5) 60%, transparent 100%),
+    radial-gradient(ellipse 55% 40% at 30% 34%, rgba(9, 11, 9, 0.55), transparent 80%);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee {
+  animation: marquee 48s linear infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+.rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s);
+}
+
+.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Word-by-word headings (WordReveal): each word rises out of a slight blur, one after another. */
+.words .w {
+  display: inline-block;
+}
+
+.js .words .w {
+  opacity: 0;
+  transform: translateY(0.35em);
+  filter: blur(8px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s ease;
+  transition-delay: calc(var(--wd, 0s) + var(--i, 0) * 140ms);
+}
+
+.js .words.in .w {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Letter-by-letter typing (WordReveal by="char"): each letter appears on its beat, a thin cursor
+   rides just after the newest letter, and on the last one it blinks a few times, then goes. */
+.chars .w {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.chars .c {
+  position: relative;
+}
+
+.js .chars .c {
+  opacity: 0;
+}
+
+.js .chars.in .c {
+  animation: type-key 1ms linear calc(var(--wd, 0s) + var(--t, 0ms)) forwards;
+}
+
+.js .chars.in .c::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 0.16em;
+  bottom: 0.04em;
+  width: 0.05em;
+  margin-left: 0.03em;
+  background: var(--accent);
+  opacity: 0;
+  animation: caret-pass 110ms steps(1) calc(var(--wd, 0s) + var(--t, 0ms)) 1;
+}
+
+.js .chars.in .c.last::after {
+  animation:
+    caret-pass 110ms steps(1) calc(var(--wd, 0s) + var(--t, 0ms)) 1,
+    caret-blink 1.05s steps(1) calc(var(--wd, 0s) + var(--t, 0ms) + 110ms) 4;
+}
+
+/* Terminal prompt cursor: a block that blinks like a real shell (steady under reduced motion). */
+.term-cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  background: var(--term-prompt);
+  animation: term-blink 1.06s steps(1) infinite;
+}
+
+@keyframes term-blink {
+  50% { opacity: 0; }
+}
+
+/* Command palette + toast: enter animations only (CSS, no animation library). */
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes palette-in {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+.palette-backdrop { animation: fade-in 150ms ease-out; }
+.palette-panel { animation: palette-in 180ms cubic-bezier(0.22, 1, 0.36, 1); }
+.toast-in { animation: toast-in 200ms ease-out; }
+
+/* Hero terminal (TypedTerminal): lines appear on their beat; commands type key by key with a block
+   cursor riding along; a blinking cursor waits at each prompt until typing starts. */
+.term .c {
+  position: relative;
+}
+
+.js .term .ln,
+.js .term .c {
+  opacity: 0;
+}
+
+.js .term.in .ln,
+.js .term.in .c {
+  animation: type-key 1ms linear var(--t, 0s) forwards;
+}
+
+.js .term.in .c::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 0.12em;
+  bottom: 0.02em;
+  width: 0.6em;
+  background: var(--term-prompt);
+  opacity: 0;
+  animation: caret-pass var(--hold, 80ms) steps(1) var(--t, 0s) 1;
+}
+
+.term-wait {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  background: var(--term-prompt);
+  opacity: 0;
+}
+
+.js .term.in .term-wait {
+  animation:
+    caret-pass var(--dur, 0s) steps(1) var(--t, 0s) 1,
+    term-blink-bg 1.06s steps(1) infinite;
+}
+
+@keyframes term-blink-bg {
+  50% { background: transparent; }
+}
+
+@keyframes type-key {
+  to { opacity: 1; }
+}
+
+@keyframes caret-pass {
+  0%, 100% { opacity: 1; }
+}
+
+@keyframes caret-blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .chars .c { opacity: 1; animation: none; }
+  .js .chars.in .c::after { content: none; }
+  .term-cursor { animation: none; }
+  .js .term .ln, .js .term .c { opacity: 1; animation: none; }
+  .js .term.in .c::after { content: none; }
+  .term-wait { display: none; }
+  .palette-backdrop, .palette-panel, .toast-in { animation: none; }
+  .marquee, .rise { animation: none; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .js .words .w { opacity: 1; transform: none; filter: none; transition: none; }
 }
